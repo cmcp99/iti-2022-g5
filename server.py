@@ -16,7 +16,21 @@ def createFile(word: str):
     for i in range(0,20):
         pdf.cell(0, 150, str(signed), ln=True, align='C')
     i = int(lastFile()) + 1
-    pdf.output(str(i) + ".pdf") 
+    os.chdir("files")
+    pdf.output(str(i) + ".pdf")
+    return "Ficheiro criado com sucesso!"
+
+@app.get("/createdouble/{word}/{pages}")
+def createFile(word: str, pages: int):
+    signed = signing_key.sign(bytes(word, 'utf-8'))
+    pdf = FPDF(orientation='L', unit='mm', format='A4')
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 140)
+    for i in range(0, pages):
+        pdf.cell(0, 150, str(signed), ln=True, align='C')
+    i = int(lastFile()) + 1
+    os.chdir("files")
+    pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
 
 # procura id do ultimo ficheiro adicionado
@@ -24,7 +38,7 @@ def lastFile():
     files = []
     for i in os.listdir():
             if i.endswith('.pdf'):
-                files.append(int(i.replace('.pdf', '')))
+                    files.append(int(i.replace('.pdf', '')))
     files.sort()
     return files[-1]
 
