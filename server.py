@@ -3,9 +3,18 @@ from fastapi.responses import FileResponse
 from fpdf import FPDF
 from nacl.signing import SigningKey
 import os
+import shutil
+import time
 
 app = FastAPI()
 signing_key = SigningKey.generate()
+
+# Eliminar ficheiros .pdf
+@app.on_event("startup")
+def start_up():
+    for i in os.listdir():
+        if i.endswith('.pdf'):
+            os.remove(i)
 
 @app.get("/create/{word}")
 def createFile(word: str):
@@ -16,7 +25,6 @@ def createFile(word: str):
     for i in range(0,20):
         pdf.cell(0, 150, str(signed), ln=True, align='C')
     i = int(lastFile()) + 1
-    os.chdir("files")
     pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
 
@@ -29,7 +37,6 @@ def createFile(word: str, pages: int):
     for i in range(0, pages):
         pdf.cell(0, 150, str(signed), ln=True, align='C')
     i = int(lastFile()) + 1
-    os.chdir("files")
     pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
 
@@ -37,10 +44,13 @@ def createFile(word: str, pages: int):
 def lastFile():
     files = []
     for i in os.listdir():
-            if i.endswith('.pdf'):
-                    files.append(int(i.replace('.pdf', '')))
+        if i.endswith('.pdf'):
+            files.append(int(i.replace('.pdf', '')))
     files.sort()
-    return files[-1]
+    if files == []:
+        return 0
+    else:
+        return files[-1]
 
 @app.get("/files")
 def getFiles():
@@ -53,3 +63,4 @@ def getFiles():
 @app.get("/file/{name}")
 def sendFile(name: str):
     return FileResponse(name)
+    
