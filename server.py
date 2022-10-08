@@ -18,24 +18,24 @@ def start_up():
 
 @app.get("/create/{word}")
 def createFile(word: str):
-    signed = signing_key.sign(bytes(word, 'utf-8'))
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
-    pdf.set_font("helvetica", "B", 140)
-    for i in range(0,20):
-        pdf.cell(0, 150, str(signed), ln=True, align='C')
+    pdf.set_font("helvetica", "B", 45)
+    while pdf.page_no() != 100:
+        signed = signing_key.sign(bytes(word, 'utf-8'))
+        pdf.cell(80, 10, str(signed), ln=True, align='C')
     i = int(lastFile()) + 1
     pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
 
 @app.get("/createdouble/{word}/{pages}")
 def createFile(word: str, pages: int):
-    signed = signing_key.sign(bytes(word, 'utf-8'))
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
-    pdf.set_font("helvetica", "B", 140)
-    for i in range(0, pages):
-        pdf.cell(0, 150, str(signed), ln=True, align='C')
+    pdf.set_font("helvetica", "B", 45)
+    while pdf.page_no() != pages:
+        signed = signing_key.sign(bytes(word, 'utf-8'))
+        pdf.cell(80, 10, str(signed), ln=True, align='C')
     i = int(lastFile()) + 1
     pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
