@@ -16,7 +16,7 @@ def start_up():
         if i.endswith('.pdf'):
             os.remove(i)
 
-@app.get("/create/{word}")
+@app.post("/create/{word}")
 def createFile(word: str):
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
@@ -28,7 +28,7 @@ def createFile(word: str):
     pdf.output(str(i) + ".pdf")
     return "Ficheiro criado com sucesso!"
 
-@app.get("/createdouble/{word}/{pages}")
+@app.post("/createdouble/{word}/{pages}")
 def createFile(word: str, pages: int):
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
