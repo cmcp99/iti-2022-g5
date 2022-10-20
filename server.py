@@ -25,24 +25,30 @@ def createFile(word: str):
         signed = signing_key.sign(bytes(word, 'utf-8'))
         pdf.cell(80, 10, str(signed), ln=True, align='C')
     b = time.time()
-    print('Tempo de criar PDF:', b-a)
+    print('Tempo para preencher PDF: ', b-a)
     c = time.time()
     i = int(lastFile()) + 1
     pdf.output(str(i) + ".pdf")
     d = time.time()
-    print('Tempo para guardar PDF:', d-c)
+    print('Tempo para escrita no disco: ', d-c)
     return "Ficheiro criado com sucesso!"
 
-@app.post("/createdouble/{word}/{pages}")
+@app.post("/createn/{word}/{pages}")
 def createFile(word: str, pages: int):
+    a = time.time()
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     pdf.set_font("helvetica", "B", 45)
     while pdf.page_no() != pages:
         signed = signing_key.sign(bytes(word, 'utf-8'))
         pdf.cell(80, 10, str(signed), ln=True, align='C')
+    b = time.time()
+    print('Tempo para preencher PDF: ', b-a)
+    c = time.time()
     i = int(lastFile()) + 1
     pdf.output(str(i) + ".pdf")
+    d = time.time()
+    print('Tempo para escrita no disco: ', d-c)
     return "Ficheiro criado com sucesso!"
 
 # procura id do ultimo ficheiro adicionado
@@ -65,7 +71,7 @@ def getFiles():
         if i.endswith('.pdf'):
             files.append(i)
     b = time.time()
-    print('Tempo para encontrar todos os ficheiros: ', b-a)
+    print('Tempo de acesso a todos os ficheiros no disco: ', b-a)
     return files
 
 @app.get("/file/{name}")
@@ -73,6 +79,6 @@ def sendFile(name: str):
     a = time.time()
     b = FileResponse(name)
     c = time.time()
-    print('Tempo para ler ficheiro: ', c-a)
+    print('Tempo de leitura do ficheiro no disco: ', c-a)
     return b
     
