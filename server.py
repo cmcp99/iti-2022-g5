@@ -3,7 +3,6 @@ from fastapi.responses import FileResponse
 from fpdf import FPDF
 from nacl.signing import SigningKey
 import os
-import shutil
 import time
 
 app = FastAPI()
@@ -18,14 +17,20 @@ def start_up():
 
 @app.post("/create/{word}")
 def createFile(word: str):
+    a = time.time()
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     pdf.set_font("helvetica", "B", 45)
     while pdf.page_no() != 100:
         signed = signing_key.sign(bytes(word, 'utf-8'))
         pdf.cell(80, 10, str(signed), ln=True, align='C')
+    b = time.time()
+    print('Tempo de criar PDF:', b-a)
+    c = time.time()
     i = int(lastFile()) + 1
     pdf.output(str(i) + ".pdf")
+    d = time.time()
+    print('Tempo para guardar PDF:', d-c)
     return "Ficheiro criado com sucesso!"
 
 @app.post("/createdouble/{word}/{pages}")
@@ -54,13 +59,20 @@ def lastFile():
 
 @app.get("/files")
 def getFiles():
+    a = time.time()
     files=[]
     for i in os.listdir():
         if i.endswith('.pdf'):
             files.append(i)
+    b = time.time()
+    print('Tempo para encontrar todos os ficheiros: ', b-a)
     return files
 
 @app.get("/file/{name}")
 def sendFile(name: str):
-    return FileResponse(name)
+    a = time.time()
+    b = FileResponse(name)
+    c = time.time()
+    print('Tempo para ler ficheiro: ', c-a)
+    return b
     
