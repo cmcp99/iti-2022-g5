@@ -5,17 +5,25 @@ from nacl.signing import SigningKey
 import os
 import time
 
+""" mkdir /mnt/mountedshare
+mount -t drvfs '\\servername\sharename' /mnt/mountedshare """
+
+#linux /mnt/mountedshare/
+#windows //192.168.1.36/smb01/
+
+dir = '//192.168.1.36/smb01/' 
 app = FastAPI()
 signing_key = SigningKey.generate()
 
-# Eliminar ficheiros .pdf
+# Eliminar ficheiros .pdf ao iniciar o servidor
 @app.on_event("startup")
 def start_up():
-    for i in os.listdir():
+    for i in os.listdir(dir):
         if i.endswith('.pdf'):
-            os.remove(i)
+            os.remove(dir + i)
 
-@app.post("/create/{word}")
+#MUDAR PARA POST
+@app.get("/create/{word}")
 def createFile(word: str):
     a = time.time()
     pdf = FPDF(orientation='L', unit='mm', format='A4')
@@ -28,7 +36,7 @@ def createFile(word: str):
     print('Tempo para preencher PDF: ', b-a)
     c = time.time()
     i = int(lastFile()) + 1
-    pdf.output(str(i) + ".pdf")
+    pdf.output(dir + str(i) + ".pdf")
     d = time.time()
     print('Tempo para escrita no disco: ', d-c)
     return "Ficheiro criado com sucesso!"
@@ -46,7 +54,7 @@ def createFile(word: str, pages: int):
     print('Tempo para preencher PDF: ', b-a)
     c = time.time()
     i = int(lastFile()) + 1
-    pdf.output(str(i) + ".pdf")
+    pdf.output(dir + str(i) + ".pdf")
     d = time.time()
     print('Tempo para escrita no disco: ', d-c)
     return "Ficheiro criado com sucesso!"
@@ -54,7 +62,7 @@ def createFile(word: str, pages: int):
 # procura id do ultimo ficheiro adicionado
 def lastFile():
     files = []
-    for i in os.listdir():
+    for i in os.listdir(dir):
         if i.endswith('.pdf'):
             files.append(int(i.replace('.pdf', '')))
     files.sort()
@@ -67,7 +75,7 @@ def lastFile():
 def getFiles():
     a = time.time()
     files=[]
-    for i in os.listdir():
+    for i in os.listdir(dir):
         if i.endswith('.pdf'):
             files.append(i)
     b = time.time()
@@ -77,7 +85,7 @@ def getFiles():
 @app.get("/file/{name}")
 def sendFile(name: str):
     a = time.time()
-    b = FileResponse(name)
+    b = FileResponse(dir + name)
     c = time.time()
     print('Tempo de leitura do ficheiro no disco: ', c-a)
     return b
