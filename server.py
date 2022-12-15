@@ -11,7 +11,7 @@ mount -t drvfs '\\servername\sharename' /mnt/mountedshare """
 #linux /mnt/mountedshare/
 #windows //192.168.1.36/smb01/
 
-dir = '/' 
+dir = 'Ficheiros/' 
 app = FastAPI()
 signing_key = SigningKey.generate()
 
