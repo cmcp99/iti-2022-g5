@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: app
+    ports:
+      - "80"
+    volumes:
+      - '/mnt/c/Users/alban/Documents/GitHub/iti-2022-g5/app/Ficheiros:/iti-2022-g5/Ficheiros:rw'
+
+  nginx:
+    image: nginx:latest
+    volumes: 
+      - './nginx.conf:/etc/nginx/nginx.conf:ro'
+    depends_on:
+      - app
+    ports:
+      - "80:80"
