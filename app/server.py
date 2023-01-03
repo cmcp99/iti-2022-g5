@@ -9,9 +9,9 @@ import time
 mount -t drvfs '\\servername\sharename' /mnt/mountedshare """
 
 #linux /mnt/mountedshare/
-#windows //192.168.1.36/smb01/
+#windows //192.168.1.36/Servidor/
 
-dir = 'Ficheiros/' 
+dir = '//192.168.6.211/Servidor/' 
 app = FastAPI()
 signing_key = SigningKey.generate()
 
